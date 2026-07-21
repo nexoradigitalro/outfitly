@@ -1,10 +1,18 @@
-export default function CapturePage() {
-  return (
-    <div className="flex flex-col items-center justify-center gap-2 px-6 pt-24 text-center">
-      <h1 className="text-2xl font-semibold">Capture</h1>
-      <p className="max-w-xs text-sm text-muted-foreground">
-        Camera capture & AI tagging pipeline ships in Milestone 1 (docs/ARCHITECTURE.md §12).
-      </p>
-    </div>
-  );
+import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@outfitly/api-client";
+import { CaptureForm } from "@/components/closet/capture-form";
+
+export default async function CapturePage() {
+  const supabase = await createClient();
+  const user = await getCurrentUser(supabase);
+
+  if (!user) {
+    return (
+      <div className="px-6 pt-24 text-center text-sm text-muted-foreground">
+        No session — something is wrong with the guest sign-in in proxy.ts.
+      </div>
+    );
+  }
+
+  return <CaptureForm profileId={user.id} />;
 }

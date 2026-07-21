@@ -76,6 +76,9 @@ export interface ClosetItem {
   imageOriginalPath: string;
   imageProcessedPath: string | null;
   imageThumbPath: string | null;
+  /** Signed URL for the best available image (thumb > processed > original) — resolved by
+   * the api-client, not a DB column; null only if signing failed. */
+  imageUrl: string | null;
   isFavorite: boolean;
   isWishlist: boolean;
   archivedAt: string | null;

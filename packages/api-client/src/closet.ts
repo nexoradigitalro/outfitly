@@ -49,7 +49,7 @@ interface ClosetItemRow {
   updated_at: string;
 }
 
-function mapClosetItem(row: ClosetItemRow): ClosetItem {
+function mapClosetItemRow(row: ClosetItemRow): Omit<ClosetItem, "imageUrl"> {
   return {
     id: row.id,
     profileId: row.profile_id,
@@ -82,6 +82,27 @@ function mapClosetItem(row: ClosetItemRow): ClosetItem {
   };
 }
 
+// Thumb/processed images live in the closet-processed bucket once the AI
+// pipeline (docs/ARCHITECTURE.md §12) writes them; until then every item
+// only has an original in closet-original. Both buckets are private, so
+// display always goes through a signed URL, never a public one.
+async function resolveImageUrl(supabase: SupabaseClient, row: ClosetItemRow): Promise<string | null> {
+  const [bucket, path] = row.image_thumb_path
+    ? (["closet-processed", row.image_thumb_path] as const)
+    : row.image_processed_path
+      ? (["closet-processed", row.image_processed_path] as const)
+      : (["closet-original", row.image_original_path] as const);
+
+  const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
+  if (error) return null;
+  return data.signedUrl;
+}
+
+async function mapClosetItem(supabase: SupabaseClient, row: ClosetItemRow): Promise<ClosetItem> {
+  const imageUrl = await resolveImageUrl(supabase, row);
+  return { ...mapClosetItemRow(row), imageUrl };
+}
+
 export async function listClosetItems(
   supabase: SupabaseClient,
   profileId: string,
@@ -98,7 +119,7 @@ export async function listClosetItems(
 
   const { data, error } = await query;
   if (error) throw error;
-  return (data as ClosetItemRow[]).map(mapClosetItem);
+  return Promise.all((data as ClosetItemRow[]).map((row) => mapClosetItem(supabase, row)));
 }
 
 export interface CreateClosetItemInput {
@@ -129,5 +150,5 @@ export async function createClosetItem(
     .select()
     .single();
   if (error) throw error;
-  return mapClosetItem(data as ClosetItemRow);
+  return mapClosetItem(supabase, data as ClosetItemRow);
 }
