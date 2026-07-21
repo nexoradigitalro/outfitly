@@ -12,7 +12,7 @@ The full founding product brief (target users, feature list, design philosophy, 
 - **Plan before building.** For any new feature area, write or update the relevant section of `docs/` before writing implementation code — don't skip straight to code for anything beyond a trivial fix.
 - **Strict TypeScript, no shortcuts.** No `any`, no disabled RLS, no skipped image optimization "for now."
 - Do not implement features from the v2/v3 future roadmap in `docs/ROADMAP.md` unless explicitly asked — they're intentionally deferred.
-- **No account (including Guest) may be created without recording consent first.** Terms of Service + Privacy Policy are mandatory and separate from the optional Marketing tick; log every consent as its own row in `consent_events`, never as a single boolean — see `docs/ARCHITECTURE.md` §8/§10.
+- **Consent gate is currently OFF for Guest sessions (dev-only state, see `docs/ARCHITECTURE.md` §10).** Terms of Service + Privacy Policy acceptance is required before any *real* account is created (moves to M-Auth), and marketing stays a separate optional tick — never bundle them. **Before any real user gets Guest access with real photos, the gate must be reinstated ahead of their first write** — this relaxation is only valid while the team is the only one testing. Log every consent as its own row in `consent_events`, never as a single boolean.
 
 ## Repo layout
 
