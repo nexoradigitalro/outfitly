@@ -4,6 +4,12 @@ Covers sections 7–19 of the founding architecture request. Product context in 
 
 **Core architectural rule:** frontend never talks to Supabase directly except through `packages/api-client`. This keeps `apps/web` a pure consumer of a typed API surface, so a future React Native app reuses `packages/api-client` and `packages/types` unchanged.
 
+> **External service accounts already exist — reuse them, don't re-register.** Google OAuth, Stripe, and transactional email (Resend) are already set up and working in the sibling project `D:\Proiecte\wedding-planner` — same accounts/credentials get reused for Outfitly rather than creating new ones from scratch. That project is the reference implementation to copy the *pattern* from:
+> - **Stripe:** `src/lib/stripe/client.ts` — same shape as our `plans`/`subscriptions` design (ARCHITECTURE.md §8), price-per-plan env vars (`STRIPE_PRICE_*`), webhook secret. Reuse for M3.
+> - **Email (Resend):** `RESEND_API_KEY` — for anything beyond Supabase's default magic-link email (e.g. Daily Outfit notifications, ROADMAP.md M4) once needed.
+> - **Google OAuth:** the Google Cloud OAuth client (ID/secret) already registered there gets reconfigured under Outfitly's own Supabase project (Authentication → Providers → Google in the Supabase dashboard) rather than creating a new Google Cloud OAuth client — the app-level env vars for this live in Supabase's own settings, not `apps/web/.env.local`.
+> - Supabase itself stays a **separate project** per app (outfitly has its own — see §10) — only Google/Stripe/Resend accounts are shared across projects, not the database.
+
 ---
 
 ## 7. Database Design (ERD, conceptual)
