@@ -45,6 +45,11 @@ export async function proxy(request: NextRequest) {
     await supabase.auth.signInAnonymously();
   }
 
+  // Every response here depends on session state — never let a browser
+  // cache one and replay it later (this is what caused a phantom
+  // /consent redirect to keep showing on a real device after the gate
+  // above was removed: the browser had cached the old redirect).
+  response.headers.set("Cache-Control", "no-store");
   return response;
 }
 
