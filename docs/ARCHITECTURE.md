@@ -352,6 +352,8 @@ Bottom tab bar (mobile primary), 5 slots:
 
 ## 18. Design System
 
+> **The visual bar is 2026, not "clean minimal dashboard."** Explicit founder direction: default shadcn/Tailwind styling (flat cards, system fonts, no depth) reads as a generic SaaS template, not a product worth screenshotting. Every milestone that ships a real user-facing screen (starting with M1 Closet) needs an actual design pass — not just wiring components together — and should reach for depth/motion/dimensionality (layered shadows, glassmorphism, subtle 3D/parallax on hero and outfit-reveal moments, tasteful use of real-time rendering for try-on) wherever it reinforces the product rather than decorates it. Reference bar: Apple, Linear, Airbnb, Instagram (PRD.md "Goals"), plus the wardrobe-app screenshots shared during planning (product-shot imagery, soft depth, confident typography). If a screen looks like it could ship in 2020, it's not done.
+
 - **Mode:** Dark-mode-first (default), light mode supported — both defined as CSS variable sets (Tailwind v4 + `next-themes`, already installed), never hardcoded colors in components.
 - **Palette:** neutral near-black base (`zinc/neutral` scale), single accent color reserved for primary actions/AI moments (generation, try-on) so it reads as premium rather than colorful; clothing-item imagery supplies the visual color, the UI chrome stays restrained.
 - **Typography:** one geometric/humanist sans for UI, generous type scale for headers (Instagram/Linear-level hierarchy), tabular numerals for stats (cost-per-wear, analytics).

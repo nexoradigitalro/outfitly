@@ -8,6 +8,7 @@ The full founding product brief (target users, feature list, design philosophy, 
 
 - **API-first, backend/frontend decoupled.** All product logic goes through the API layer (`packages/api-client` + Supabase), never embedded directly in Next.js pages/components, because the same backend must serve a future native app.
 - **Mobile-first, dark-mode-first.** Design for a one-handed phone screen; desktop is a secondary breakpoint, not the primary target.
+- **The design bar is 2026, not default shadcn/Tailwind.** No screen ships as flat, generic-dashboard styling — reach for depth, motion, and where it fits, 3D/dimensional visuals; see `docs/ARCHITECTURE.md` §18 for the full direction. If it could pass for a 2020 SaaS template, it's not done.
 - **Plan before building.** For any new feature area, write or update the relevant section of `docs/` before writing implementation code — don't skip straight to code for anything beyond a trivial fix.
 - **Strict TypeScript, no shortcuts.** No `any`, no disabled RLS, no skipped image optimization "for now."
 - Do not implement features from the v2/v3 future roadmap in `docs/ROADMAP.md` unless explicitly asked — they're intentionally deferred.
