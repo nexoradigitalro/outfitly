@@ -9,7 +9,7 @@ Covers sections 20–24 of the founding architecture request. Product context in
 **Onboarding (full-bleed, no bottom nav):**
 `Welcome → Consent (Terms + Privacy required, separate ticks; Marketing optional, off by default — ARCHITECTURE.md §10) → Auth choice (Google/Apple/Magic Link/Guest) → Basic info (name/gender/height/weight/age) → Style prefs (chips: style, colors, brands, occasions) → Body photo capture (2–5 photos, pose guides, own explicit consent line before first capture) → "Generating your avatar…" → Done, enter app`
 
-Consent step ships in **M0**, not deferred with the rest of auth (§21) — Guest sessions still process personal data (photos, body measurements) and need a lawful basis from the very first interaction, not just once real accounts exist.
+Consent step ships in **M0**, not deferred with the rest of auth (§21) — Guest sessions still process personal data (photos, body measurements) and need a lawful basis from the very first interaction, not just once real accounts exist. As implemented, M0 ships *only* the Consent screen standalone (guest sign-in is silent, done by middleware, no "Auth choice" screen yet) → straight into the empty app shell. Basic info / style prefs / body photos / avatar generation are deferred to whichever milestone first consumes them (M1 Closet for basic info, later for avatar/try-on) rather than collected upfront with nothing yet using them.
 
 **Closet home** (matches reference screenshot 1): category tab bar pinned top (`All / Tops / Jackets / Bottoms / Accessories / Shoes / Outfits`), 2-col masonry grid below, floating capture button bottom-right, pull-to-refresh, filter/sort icon top-right opening a sheet.
 
