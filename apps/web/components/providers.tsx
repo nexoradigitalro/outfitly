@@ -10,9 +10,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Dark-mode-first per docs/ARCHITECTURE.md §18 — "dark" is the
-          default, not "system", though users can still switch. */}
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      {/* Prism (docs/ARCHITECTURE.md §18.1) IS the dark theme — light-mode
+          tokens don't exist yet, so no system/light switching until they do. */}
+      <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
         {children}
         <Toaster position="top-center" />
       </ThemeProvider>

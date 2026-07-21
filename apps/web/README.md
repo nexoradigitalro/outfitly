@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Outfitly — web app
 
-## Getting Started
+Next.js 16 / React 19 app. See the repo root [CLAUDE.md](../../CLAUDE.md) for the ground rules and [docs/](../../docs/) for product/architecture — this file only covers running `apps/web` itself.
 
-First, run the development server:
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev        # from the repo root, or inside apps/web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy `.env.local.example` to `.env.local` and fill in the Supabase project URL + anon key first (see `docs/ARCHITECTURE.md` §10).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Design direction: Prism
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Before writing Closet UI code, three visual directions (Atelier, Prism, Studio Concrete) were mocked up as a self-contained HTML artifact — same screen, same real content (category seeds, bottom nav, one AI moment), only the design language different — and compared before picking one. **Prism won**: void-black glass surfaces, one warm amber accent meant to read as *pulled from the user's own wardrobe colors* rather than a fixed brand hue (deliberately not the violet/indigo glow every other AI app defaults to). Full token spec — colors, type, icons, motion rules — is in `docs/ARCHITECTURE.md` §18.1. Applies to native too (docs/NATIVE.md), not just web.
 
-## Learn More
+This mockup-first workflow (a handful of interactive HTML directions compared before code) is worth repeating for any future screen where the visual treatment isn't obvious from the token spec alone.
 
-To learn more about Next.js, take a look at the following resources:
+## Commands
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — dev server
+- `npm run build` — production build
+- `npm run lint` — eslint
+- `npm run typecheck` — `tsc --noEmit`

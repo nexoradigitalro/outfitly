@@ -312,7 +312,7 @@ Route groups `(auth)/(onboarding)/(app)` keep layout concerns (bottom nav vs. fu
 
 Already scaffolded via shadcn (`components/ui`): `avatar, badge, button, card, dialog, dropdown-menu, input, label, scroll-area, select, separator, sheet, skeleton, sonner, tabs, textarea, tooltip`. These cover primitives; Outfitly-specific composites still needed (build on top, don't fork the primitives):
 
-- **ClosetGrid / ItemCard** — Pinterest-style masonry, cost-per-wear badge, confidence-hint underline
+- **ClosetGrid / ItemCard** — Pinterest-style masonry. Card content is the garment photo, full-bleed, plus the item name — nothing else stacked on the grid card. Real photos are already visually varied/multicolored; a floating stat badge (price, %, confidence) on every card reads as a game-inventory slot, not a wardrobe (learned from design-direction mockups, see §18 note) — cost-per-wear, confidence, etc. belong in the item detail view or a single analytics summary, not repeated on every grid tile. Card *chrome* (border, radius, shadow, background) stays neutral/consistent regardless of direction chosen, precisely because the photos supply all the color.
 - **ItemEditSheet** — bottom sheet (mobile) built on `sheet.tsx`, houses the AI-prefilled editable form + color swatch picker (matches reference screenshot 2)
 - **CategoryTabBar** — horizontal scroll tab bar (All/Tops/Jackets/…, matches reference screenshot 1), built on `tabs.tsx`
 - **OutfitCard** — flat-lay/try-on image + "why this works" expandable text + save/share actions
@@ -354,12 +354,29 @@ Bottom tab bar (mobile primary), 5 slots:
 
 > **The visual bar is 2026, not "clean minimal dashboard."** Explicit founder direction: default shadcn/Tailwind styling (flat cards, system fonts, no depth) reads as a generic SaaS template, not a product worth screenshotting. Every milestone that ships a real user-facing screen (starting with M1 Closet) needs an actual design pass — not just wiring components together — and should reach for depth/motion/dimensionality (layered shadows, glassmorphism, subtle 3D/parallax on hero and outfit-reveal moments, tasteful use of real-time rendering for try-on) wherever it reinforces the product rather than decorates it. Reference bar: Apple, Linear, Airbnb, Instagram (PRD.md "Goals"), plus the wardrobe-app screenshots shared during planning (product-shot imagery, soft depth, confident typography). If a screen looks like it could ship in 2020, it's not done.
 
-- **Mode:** Dark-mode-first (default), light mode supported — both defined as CSS variable sets (Tailwind v4 + `next-themes`, already installed), never hardcoded colors in components.
-- **Palette:** neutral near-black base (`zinc/neutral` scale), single accent color reserved for primary actions/AI moments (generation, try-on) so it reads as premium rather than colorful; clothing-item imagery supplies the visual color, the UI chrome stays restrained.
-- **Typography:** one geometric/humanist sans for UI, generous type scale for headers (Instagram/Linear-level hierarchy), tabular numerals for stats (cost-per-wear, analytics).
-- **Radius:** consistently rounded (shadcn `--radius` token), larger radii on image cards/sheets than on buttons/inputs, matching the reference screenshots' soft card corners.
-- **Motion:** Framer Motion for: item-card enter (staggered grid), sheet/modal transitions, outfit-generation "reveal," tab transitions — every transition ≤300ms, spring-based not linear, nothing blocks input.
-- **Imagery:** large, edge-to-edge where possible; clothing photos are the hero visual, chrome recedes (per reference screenshots' clean product-shot style).
+### 18.1 Decided direction: "Prism"
+
+Three directions (Atelier, Prism, Studio Concrete) were mocked up and compared before writing UI code — see the process note in `apps/web/README.md`. **Prism won** and is now the one true design language for this product, on **both web and the future native app** (docs/NATIVE.md — same tokens, ported via a future `packages/design-tokens`, not reinvented per platform). Concept: void-black glass surfaces with a single warm accent that reads as *pulled from the user's own wardrobe colors*, not an arbitrary brand hue — this is also why the accent is warm amber/copper rather than the violet/indigo glow every other AI product defaults to in 2026.
+
+**Tokens:**
+
+| Token | Value | Use |
+|---|---|---|
+| `--void` | `#0a0a0d` | Base background |
+| `--card` / glass surface | `#15151c` | Cards, sheets, the floating nav pill |
+| `--text` | `#eef0f5` | Primary text |
+| `--dim` | `#8b8b98` | Secondary/muted text, inactive nav items |
+| `--accent` (amber) | `#dc9a5c` | The *one* bold moment — capture button, active/AI states, generated-outfit highlight. Never used as a general UI color. |
+| `--accent-deep` | `#8a6238` | Pressed/dim variant of the accent |
+
+- **Glass, not flat:** cards get `inset 0 1px 0 rgba(255,255,255,.08)` (top edge catching light) + a soft drop shadow, not just a flat fill. The bottom nav is a floating rounded glass pill (background + hairline border + inset highlight), not a plain full-width bar.
+- **One ambient glow, no pulsing:** a soft radial amber glow sits behind hero surfaces (e.g. behind the phone/card stack) for depth. Static — no pulsing/breathing animation, which reads as gaming-peripheral RGB, not premium.
+- **Typography:** Display — Unbounded 700, sentence case, one hero moment at a time (never a full gradient-filled heading, never forced lowercase — that read as HUD/terminal in early passes). Body/UI — Archivo 400/700. Data (cost-per-wear, dates, once implemented) — IBM Plex Mono, tabular figures.
+- **Icons:** real `lucide-react` glyphs everywhere (already a dependency), never custom hand-drawn shapes — a door-closed icon for Closet, globe for Discover, shirt for Outfits, camera for Capture, circle-user for Profile. Abstract dot/badge nav icons were tried and read as a mobile-game HUD, not a premium app.
+- **Cards show photo + name only** — no floating stat/percentage/price badge on every grid tile. Real garment photos are already visually varied; stacking a numeric badge on each one reads as a game-inventory slot. Cost-per-wear, AI confidence, etc. belong in the item detail view or a single analytics summary, never repeated per-card.
+- **Radius:** 16px+, soft glass edges.
+- **Motion:** Framer Motion for item-card enter (staggered grid, subtle lift), sheet/modal transitions, outfit-generation "reveal," tab transitions — every transition ≤300ms, spring-based not linear, nothing blocks input, no gratuitous glow/pulse.
+- **Mode:** Dark-mode-first (default) — Prism *is* the dark theme; a light-mode variant is deferred, not yet designed (`next-themes` is wired, but light-mode Prism tokens don't exist yet — needs its own pass before light mode ships, don't just invert the dark values).
 
 ---
 

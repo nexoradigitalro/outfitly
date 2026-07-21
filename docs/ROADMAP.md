@@ -39,6 +39,8 @@ Supabase project + core migrations (§8), RLS policies, **anonymous (Guest) auth
 **M1 — Closet MVP**
 Photo capture → upload → background removal + thumbnailing → AI tagging pipeline (§12) → editable Item detail sheet → Closet grid with category tabs, favorites, archive. *No outfit generation yet.* This alone should feel useful (a clean digitized closet).
 
+> **In progress:** Closet grid, category tabs, and ItemCard ship in the real Prism visual language (`apps/web/app/(app)/page.tsx`, `components/closet/`), wired to real `closet_items` queries/RLS — verified end-to-end (guest session → insert → persists across reload). Still missing: the actual capture/upload/background-removal/AI-tagging pipeline (§12) and the item detail sheet. Until capture ships, a dev-only "Seed demo items" action (`hooks/use-closet.ts`) inserts through the same `createClosetItem()` path the real pipeline will use, so the grid isn't empty during development — delete it once capture is real.
+
 **M2 — Outfits**
 Outfit generation (LLM over structured closet data) + "why this works," save/favorite outfits, unified Discover search/generate bar, regenerate.
 
