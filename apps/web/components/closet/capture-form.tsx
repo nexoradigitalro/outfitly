@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Camera } from "lucide-react";
 import { toast } from "sonner";
@@ -21,7 +21,6 @@ const DEFAULT_COLOR = "#7c8a5c";
 
 export function CaptureForm({ profileId }: { profileId: string }) {
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -58,7 +57,7 @@ export function CaptureForm({ profileId }: { profileId: string }) {
 
   return (
     <div className="flex flex-col gap-6 px-5 pt-6">
-      <div>
+      <div className="text-center">
         <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
           Add to closet
         </div>
@@ -69,20 +68,18 @@ export function CaptureForm({ profileId }: { profileId: string }) {
         </p>
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        className="hidden"
-        onChange={handleFileChange}
-      />
-
-      <button
-        type="button"
-        onClick={() => fileInputRef.current?.click()}
-        className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-card"
-      >
+      {/* The real <input> sits directly on top of the tappable area instead
+          of being triggered via a hidden input + ref.click() — that pattern
+          is unreliable on mobile Safari/Chrome (a programmatic .click() on a
+          display:none file input doesn't always count as a user gesture). */}
+      <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-card">
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={handleFileChange}
+          className="absolute inset-0 size-full cursor-pointer opacity-0"
+        />
         {previewUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- local object URL preview, not a remote image
           <img src={previewUrl} alt="Selected item" className="size-full object-cover" />
@@ -92,7 +89,7 @@ export function CaptureForm({ profileId }: { profileId: string }) {
             <span className="text-sm">Tap to take or choose a photo</span>
           </div>
         )}
-      </button>
+      </div>
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">

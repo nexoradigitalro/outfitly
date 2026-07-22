@@ -16,13 +16,15 @@ export function ClosetGrid({ profileId }: { profileId: string }) {
 
   return (
     <div className="flex flex-col px-5 pt-6">
-      <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
-        Your wardrobe
+      <div className="text-center">
+        <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
+          Your wardrobe
+        </div>
+        <h1 className="mb-1 font-heading text-3xl font-bold">Closet</h1>
+        <p className="mb-5 text-sm text-muted-foreground">
+          {itemsQuery.data ? `${itemsQuery.data.length} items` : " "}
+        </p>
       </div>
-      <h1 className="mb-1 font-heading text-3xl font-bold">Closet</h1>
-      <p className="mb-5 text-sm text-muted-foreground">
-        {itemsQuery.data ? `${itemsQuery.data.length} items` : " "}
-      </p>
 
       <CategoryTabBar
         categories={categoriesQuery.data ?? []}

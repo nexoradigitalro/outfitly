@@ -8,7 +8,7 @@ export default async function ProfilePage() {
   if (!user) {
     return (
       <div className="px-6 pt-24 text-center text-sm text-muted-foreground">
-        No session — something is wrong with the guest sign-in in middleware.ts.
+        No session — something is wrong with the guest sign-in in proxy.ts.
       </div>
     );
   }
@@ -20,7 +20,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="flex flex-col gap-6 px-6 pt-16">
-      <h1 className="text-2xl font-semibold">Profile</h1>
+      <h1 className="text-center font-heading text-2xl font-bold">Profile</h1>
 
       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
         <dt className="text-muted-foreground">Session</dt>
