@@ -6,9 +6,13 @@ import type { ClosetItem } from "@outfitly/types";
 // badge on the grid tile (docs/ARCHITECTURE.md §18.1 / §15: that pattern read
 // as a game-inventory slot in early design-direction mockups). Cost-per-wear
 // etc. belong in the detail view, once it exists.
-export function ItemCard({ item }: { item: ClosetItem }) {
+export function ItemCard({ item, onClick }: { item: ClosetItem; onClick?: () => void }) {
   return (
-    <div className="flex flex-col gap-2.5 rounded-2xl border border-border bg-card p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_10px_20px_-12px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-0.5">
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex flex-col gap-2.5 rounded-2xl border border-border bg-card p-2.5 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_10px_20px_-12px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-0.5"
+    >
       <div
         className="relative flex aspect-[1/0.92] items-center justify-center overflow-hidden rounded-[11px]"
         style={{
@@ -38,6 +42,6 @@ export function ItemCard({ item }: { item: ClosetItem }) {
       <div className="px-0.5 text-xs font-semibold leading-tight">
         {item.name ?? "Untitled item"}
       </div>
-    </div>
+    </button>
   );
 }

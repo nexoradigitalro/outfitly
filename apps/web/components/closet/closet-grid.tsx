@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { Shirt } from "lucide-react";
+import type { ClosetItem } from "@outfitly/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useCategories, useClosetItems, useSeedDemoCloset } from "@/hooks/use-closet";
 import { CategoryTabBar } from "./category-tab-bar";
 import { ItemCard } from "./item-card";
+import { ItemDetailSheet } from "./item-detail-sheet";
 
 export function ClosetGrid({ profileId }: { profileId: string }) {
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ClosetItem | null>(null);
   const categoriesQuery = useCategories();
   const itemsQuery = useClosetItems(profileId, activeCategoryId);
   const seedDemo = useSeedDemoCloset(profileId);
@@ -62,11 +65,17 @@ export function ClosetGrid({ profileId }: { profileId: string }) {
         {itemsQuery.data && itemsQuery.data.length > 0 && (
           <div className="grid grid-cols-2 gap-2.5">
             {itemsQuery.data.map((item) => (
-              <ItemCard key={item.id} item={item} />
+              <ItemCard key={item.id} item={item} onClick={() => setSelectedItem(item)} />
             ))}
           </div>
         )}
       </div>
+
+      <ItemDetailSheet
+        key={selectedItem?.id ?? "none"}
+        item={selectedItem}
+        onOpenChange={(open) => !open && setSelectedItem(null)}
+      />
     </div>
   );
 }

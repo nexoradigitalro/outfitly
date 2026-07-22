@@ -152,3 +152,41 @@ export async function createClosetItem(
   if (error) throw error;
   return mapClosetItem(supabase, data as ClosetItemRow);
 }
+
+export interface UpdateClosetItemInput {
+  name?: string;
+  categoryId?: string | null;
+  primaryColorHex?: string;
+  isFavorite?: boolean;
+}
+
+export async function updateClosetItem(
+  supabase: SupabaseClient,
+  itemId: string,
+  input: UpdateClosetItemInput,
+): Promise<ClosetItem> {
+  const patch: Record<string, unknown> = {};
+  if (input.name !== undefined) patch.name = input.name;
+  if (input.categoryId !== undefined) patch.category_id = input.categoryId;
+  if (input.primaryColorHex !== undefined) patch.primary_color_hex = input.primaryColorHex;
+  if (input.isFavorite !== undefined) patch.is_favorite = input.isFavorite;
+
+  const { data, error } = await supabase
+    .from("closet_items")
+    .update(patch)
+    .eq("id", itemId)
+    .select()
+    .single();
+  if (error) throw error;
+  return mapClosetItem(supabase, data as ClosetItemRow);
+}
+
+// Soft delete (docs/ARCHITECTURE.md §7) — archived_at, never a hard delete,
+// so cost-per-wear/analytics keep working off historical items later.
+export async function archiveClosetItem(supabase: SupabaseClient, itemId: string): Promise<void> {
+  const { error } = await supabase
+    .from("closet_items")
+    .update({ archived_at: new Date().toISOString() })
+    .eq("id", itemId);
+  if (error) throw error;
+}

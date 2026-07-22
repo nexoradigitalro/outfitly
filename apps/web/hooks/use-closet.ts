@@ -2,7 +2,14 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
-import { listCategories, listClosetItems, createClosetItem } from "@outfitly/api-client";
+import {
+  listCategories,
+  listClosetItems,
+  createClosetItem,
+  updateClosetItem,
+  archiveClosetItem,
+  type UpdateClosetItemInput,
+} from "@outfitly/api-client";
 
 export function useCategories() {
   return useQuery({
@@ -17,6 +24,29 @@ export function useClosetItems(profileId: string | undefined, categoryId: string
     queryKey: ["closet-items", profileId, categoryId],
     queryFn: () => listClosetItems(createClient(), profileId!, categoryId ?? undefined),
     enabled: !!profileId,
+  });
+}
+
+export function useUpdateClosetItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ itemId, input }: { itemId: string; input: UpdateClosetItemInput }) =>
+      updateClosetItem(createClient(), itemId, input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["closet-items"] });
+    },
+  });
+}
+
+export function useArchiveClosetItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (itemId: string) => archiveClosetItem(createClient(), itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["closet-items"] });
+    },
   });
 }
 
