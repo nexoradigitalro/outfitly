@@ -136,7 +136,17 @@ export function CaptureForm({ profileId }: { profileId: string }) {
 
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="item-category">Category</Label>
-          <Select value={categoryId} onValueChange={setCategoryId}>
+          <Select
+            value={categoryId}
+            onValueChange={setCategoryId}
+            // Base UI's <Select.Value> shows the raw value (a UUID here)
+            // unless the root is told the value->label mapping via `items`
+            // — unlike Radix, an <Item>'s children alone isn't enough.
+            items={(categoriesQuery.data ?? []).map((category) => ({
+              value: category.id,
+              label: category.label,
+            }))}
+          >
             <SelectTrigger id="item-category" className="w-full">
               <SelectValue placeholder="Choose a category" />
             </SelectTrigger>
