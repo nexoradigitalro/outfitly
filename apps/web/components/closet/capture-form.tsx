@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Camera } from "lucide-react";
+import { Camera, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   Select,
   SelectContent,
@@ -23,6 +24,7 @@ export function CaptureForm({ profileId }: { profileId: string }) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [name, setName] = useState("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [colorHex, setColorHex] = useState(DEFAULT_COLOR);
@@ -35,6 +37,7 @@ export function CaptureForm({ profileId }: { profileId: string }) {
     if (!selected) return;
     setFile(selected);
     setPreviewUrl(URL.createObjectURL(selected));
+    setPickerOpen(false);
   }
 
   async function handleSave() {
@@ -68,18 +71,11 @@ export function CaptureForm({ profileId }: { profileId: string }) {
         </p>
       </div>
 
-      {/* The real <input> sits directly on top of the tappable area instead
-          of being triggered via a hidden input + ref.click() — that pattern
-          is unreliable on mobile Safari/Chrome (a programmatic .click() on a
-          display:none file input doesn't always count as a user gesture). */}
-      <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-card">
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={handleFileChange}
-          className="absolute inset-0 size-full cursor-pointer opacity-0"
-        />
+      <button
+        type="button"
+        onClick={() => setPickerOpen(true)}
+        className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-card"
+      >
         {previewUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- local object URL preview, not a remote image
           <img src={previewUrl} alt="Selected item" className="size-full object-cover" />
@@ -89,7 +85,43 @@ export function CaptureForm({ profileId }: { profileId: string }) {
             <span className="text-sm">Tap to take or choose a photo</span>
           </div>
         )}
-      </div>
+      </button>
+
+      <Sheet open={pickerOpen} onOpenChange={setPickerOpen}>
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle>Add a photo</SheetTitle>
+          </SheetHeader>
+          <div className="flex flex-col gap-2 p-4 pt-0">
+            {/* Each option's real <input> sits directly on top of its own row
+                (opacity-0, not display:none) — the only pattern that reliably
+                counts as a user gesture on mobile Safari/Chrome. One input
+                forces the camera (capture=environment), the other omits
+                capture so the OS offers the photo library instead. */}
+            <label className="relative flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+              <Camera className="size-5 text-muted-foreground" strokeWidth={1.5} />
+              <span className="text-sm font-medium">Take a photo</span>
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleFileChange}
+                className="absolute inset-0 size-full cursor-pointer opacity-0"
+              />
+            </label>
+            <label className="relative flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+              <ImageIcon className="size-5 text-muted-foreground" strokeWidth={1.5} />
+              <span className="text-sm font-medium">Choose from gallery</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="absolute inset-0 size-full cursor-pointer opacity-0"
+              />
+            </label>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
